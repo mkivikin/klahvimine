@@ -14,7 +14,8 @@ const TYPER = function () {
   this.word = null
   this.wordMinLength = 5
   this.guessedWords = 0
-
+  this.score = 0
+  this.multiplier = 0
   this.init()
 }
 
@@ -32,6 +33,7 @@ TYPER.prototype = {
     this.canvas.height = this.HEIGHT * 2
 
     this.loadWords()
+	console.log("init")
   },
 
   loadWords: function () {
@@ -45,6 +47,7 @@ TYPER.prototype = {
         typer.words = structureArrayByWordLength(wordsFromFile)
 
         typer.start()
+		console.log("onreadystatechange")
       }
     }
 
@@ -63,24 +66,32 @@ TYPER.prototype = {
     const generatedWordLength = this.wordMinLength + parseInt(this.guessedWords / 5)
     const randomIndex = (Math.random() * (this.words[generatedWordLength].length - 1)).toFixed()
     const wordFromArray = this.words[generatedWordLength][randomIndex]
-
     this.word = new Word(wordFromArray, this.canvas, this.ctx)
+	console.log("genereerin sõna")
+	this.multiplier = generatedWordLength
   },
 
   keyPressed: function (event) {
     const letter = String.fromCharCode(event.which)
-
+	console.log("vaatab mis tähte kirjutati")
     if (letter === this.word.left.charAt(0)) {
       this.word.removeFirstLetter()
-
+		this.score += 1
       if (this.word.left.length === 0) {
         this.guessedWords += 1
-
         this.generateWord()
+		this.score = this.score + (this.multiplier*this.guessedWords)
+		console.log("Sõna arvatud")
+		console.log(this.score)
       }
 
       this.word.Draw()
-    }
+    } else {
+		if (this.score > 0) {
+		this.score = this.score-(this.guessedWords)
+		console.log(this.score)
+		}
+	}
   }
 }
 
@@ -90,6 +101,7 @@ const Word = function (word, canvas, ctx) {
   this.left = this.word
   this.canvas = canvas
   this.ctx = ctx
+  console.log("Teeb objekti")
 }
 
 Word.prototype = {
@@ -99,28 +111,32 @@ Word.prototype = {
     this.ctx.textAlign = 'center'
     this.ctx.font = '140px Courier'
     this.ctx.fillText(this.left, this.canvas.width / 2, this.canvas.height / 2)
+	console.log("Kirjutab sõna")
   },
 
   removeFirstLetter: function () {
     this.left = this.left.slice(1)
+	console.log("eemaldab esimese tähe")
   }
 }
 
 /* HELPERS */
 function structureArrayByWordLength (words) {
   let tempArray = []
-
+	console.log("hui tean")
   for (let i = 0; i < words.length; i++) {
     const wordLength = words[i].length
     if (tempArray[wordLength] === undefined)tempArray[wordLength] = []
 
     tempArray[wordLength].push(words[i])
+	//console.log(tempArray[i])
   }
 
   return tempArray
 }
 
 window.onload = function () {
+	console.log("aken laeb")
   const typer = new TYPER()
   window.typer = typer
 }
