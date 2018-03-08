@@ -74,6 +74,7 @@ TYPER.prototype = {
   keyPressed: function (event) {
     const letter = String.fromCharCode(event.which)
 	console.log("vaatab mis tähte kirjutati")
+	document.getElementById("Skoor").innerHTML = this.score;
     if (letter === this.word.left.charAt(0)) {
       this.word.removeFirstLetter()
 		this.score += 1
@@ -81,6 +82,7 @@ TYPER.prototype = {
         this.guessedWords += 1
         this.generateWord()
 		this.score = this.score + (this.multiplier*this.guessedWords)
+		document.getElementById("Skoor").innerHTML = this.score;
 		console.log("Sõna arvatud")
 		console.log(this.score)
       }
@@ -89,6 +91,7 @@ TYPER.prototype = {
     } else {
 		if (this.score > 0) {
 		this.score = this.score-(this.guessedWords)
+		document.getElementById("Skoor").innerHTML = this.score;
 		console.log(this.score)
 		}
 	}
